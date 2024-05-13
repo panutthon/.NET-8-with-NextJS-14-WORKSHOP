@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
-namespace StoreAPI.Models;
+using StoreAPI.Models;
+namespace StoreAPI.Data;
 
 public partial class ApplicationDbContext : DbContext
 {
