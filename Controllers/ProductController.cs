@@ -105,7 +105,7 @@ public class ProductController : ControllerBase
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
 
             // บันทึกไฟล์รูปภาพ
-            string uploadFolder = Path.Combine(_env.ContentRootPath, "images");
+            string uploadFolder = Path.Combine(_env.ContentRootPath, "uploads");
 
             // ตรวจสอบว่าโฟล์เดอร์นี้มีอยู่หรือยัง
             if (!Directory.Exists(uploadFolder))
