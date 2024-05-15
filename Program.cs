@@ -98,6 +98,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// แ
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyHeader();
+    options.AllowAnyMethod();
+});
+
+//Cors Allow Specific Origin
+// app.UseCors(options =>
+// {
+//     options.WithOrigins("http://localhost:3000");
+//     options.WithHeaders("Content-Type", "Authorization", "Accept");
+//     options.WithMethods("GET", "POST");
+// });
+
+
+
 app.UseHttpsRedirection();
 
 // adding Authentication
