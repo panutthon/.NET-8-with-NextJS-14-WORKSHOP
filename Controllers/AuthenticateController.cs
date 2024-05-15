@@ -38,10 +38,11 @@ public class AuthenticateController : ControllerBase
         if (userExist != null)
         {
             return StatusCode(
-                StatusCodes.Status500InternalServerError, 
-                new Response { 
-                    Status = "Error", 
-                    Message = "User already exist!" 
+                StatusCodes.Status500InternalServerError,
+                new Response
+                {
+                    Status = "Error",
+                    Message = "User already exist!"
                 }
             );
         }
@@ -58,20 +59,23 @@ public class AuthenticateController : ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
 
         // ถ้าสร้างไม่สำเร็จ
-        if (!result.Succeeded){
+        if (!result.Succeeded)
+        {
             return StatusCode(
-                StatusCodes.Status500InternalServerError, 
-                new Response { 
-                    Status = "Error", 
-                    Message = "User creation failed! Please check user details and try again." 
+                StatusCodes.Status500InternalServerError,
+                new Response
+                {
+                    Status = "Error",
+                    Message = "User creation failed! Please check user details and try again."
                 }
             );
         }
 
         // สร้าง user สำเร็จ
-        return Ok(new Response { 
-            Status = "Success", 
-            Message = "User created successfully!" 
+        return Ok(new Response
+        {
+            Status = "Success",
+            Message = "User created successfully!"
         });
     }
 
@@ -83,10 +87,11 @@ public class AuthenticateController : ControllerBase
         var userExists = await _userManager.FindByNameAsync(model.Username!);
         if (userExists != null)
             return StatusCode(
-                StatusCodes.Status500InternalServerError, 
-                new Response { 
-                    Status = "Error", 
-                    Message = "User already exists!" 
+                StatusCodes.Status500InternalServerError,
+                new Response
+                {
+                    Status = "Error",
+                    Message = "User already exists!"
                 }
             );
 
@@ -98,25 +103,28 @@ public class AuthenticateController : ControllerBase
         };
 
         var result = await _userManager.CreateAsync(user, model.Password!);
-        
+
 
         if (!result.Succeeded)
             return StatusCode(
-                StatusCodes.Status500InternalServerError, 
-                new Response { 
-                    Status = "Error", 
-                    Message = "User creation failed! Please check user details and try again." 
+                StatusCodes.Status500InternalServerError,
+                new Response
+                {
+                    Status = "Error",
+                    Message = "User creation failed! Please check user details and try again."
                 }
             );
 
-        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin)){
             await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-        if (!await _roleManager.RoleExistsAsync(UserRoles.Manager))
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        } else if (!await _roleManager.RoleExistsAsync(UserRoles.Manager)){
             await _roleManager.CreateAsync(new IdentityRole(UserRoles.Manager));
-        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        } else if (!await _roleManager.RoleExistsAsync(UserRoles.User)){
             await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-        
-        await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        }
 
         return Ok(new Response { Status = "Success", Message = "User created successfully!" });
     }
@@ -169,6 +177,6 @@ public class AuthenticateController : ControllerBase
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
-        return token; 
+        return token;
     }
 }
