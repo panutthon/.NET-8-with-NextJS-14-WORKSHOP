@@ -38,11 +38,10 @@ public class AuthenticateController : ControllerBase
         if (userExist != null)
         {
             return StatusCode(
-                StatusCodes.Status500InternalServerError,
-                new Response
-                {
-                    Status = "Error",
-                    Message = "User already exist!"
+                StatusCodes.Status500InternalServerError, 
+                new Response { 
+                    Status = "Error", 
+                    Message = "User already exist!" 
                 }
             );
         }
@@ -59,23 +58,20 @@ public class AuthenticateController : ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
 
         // ถ้าสร้างไม่สำเร็จ
-        if (!result.Succeeded)
-        {
+        if (!result.Succeeded){
             return StatusCode(
-                StatusCodes.Status500InternalServerError,
-                new Response
-                {
-                    Status = "Error",
-                    Message = "User creation failed! Please check user details and try again."
+                StatusCodes.Status500InternalServerError, 
+                new Response { 
+                    Status = "Error", 
+                    Message = "User creation failed! Please check user details and try again." 
                 }
             );
         }
 
         // สร้าง user สำเร็จ
-        return Ok(new Response
-        {
-            Status = "Success",
-            Message = "User created successfully!"
+        return Ok(new Response { 
+            Status = "Success", 
+            Message = "User created successfully!" 
         });
     }
 
@@ -87,11 +83,10 @@ public class AuthenticateController : ControllerBase
         var userExists = await _userManager.FindByNameAsync(model.Username!);
         if (userExists != null)
             return StatusCode(
-                StatusCodes.Status500InternalServerError,
-                new Response
-                {
-                    Status = "Error",
-                    Message = "User already exists!"
+                StatusCodes.Status500InternalServerError, 
+                new Response { 
+                    Status = "Error", 
+                    Message = "User already exists!" 
                 }
             );
 
@@ -106,11 +101,10 @@ public class AuthenticateController : ControllerBase
 
         if (!result.Succeeded)
             return StatusCode(
-                StatusCodes.Status500InternalServerError,
-                new Response
-                {
-                    Status = "Error",
-                    Message = "User creation failed! Please check user details and try again."
+                StatusCodes.Status500InternalServerError, 
+                new Response { 
+                    Status = "Error", 
+                    Message = "User creation failed! Please check user details and try again." 
                 }
             );
 
@@ -172,6 +166,6 @@ public class AuthenticateController : ControllerBase
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
-        return token;
+        return token; 
     }
 }

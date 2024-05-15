@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using StoreAPI.Data;
 using StoreAPI.Models;
 
-
 namespace StoreAPI.Controllers;
 
 [ApiController]
@@ -12,10 +11,11 @@ public class ProductController : ControllerBase
     // สร้าง Object ของ ApplicationDbContext
     private readonly ApplicationDbContext _context;
 
-    //IWebHostEnvironment คืออะไร เป็นส่วนของการเชื่อมต่อ database หรือ interface อ่าน path server
-    // ContentRootPath คือ path server ที่เราตั้งไว้
-    // WebRotaPath คือ path server ที่เราเชื่อมต่อ database
-    private readonly IWebHostEnvironment _env; // ใช้เพื่อดู path server ที่เราตั้งไว้
+    // IWebHostEnvironment คืออะไร
+    // IWebHostEnvironment เป็นอินเทอร์เฟซใน ASP.NET Core ที่ใช้สำหรับดึงข้อมูลเกี่ยวกับสภาพแวดล้อมการโฮสต์เว็บแอปพลิเคชัน
+    // ContentRootPath: เส้นทางไปยังโฟลเดอร์รากของเว็บแอปพลิเคชัน
+    // WebRootPath: เส้นทางไปยังโฟลเดอร์ wwwroot ของเว็บแอปพลิเคชัน
+    private readonly IWebHostEnvironment _env;
 
     // สร้าง Constructor รับค่า ApplicationDbContext
     public ProductController(ApplicationDbContext context, IWebHostEnvironment env)
@@ -93,21 +93,20 @@ public class ProductController : ControllerBase
     // ฟังก์ชันสำหรับการเพิ่มข้อมูลสินค้า
     // POST: /api/Product
     [HttpPost]
-    public async Task<ActionResult<product>> CreateProduct([FromForm]product product, IFormFile image) // async เพราะเราจะดึงข้อมูลจากตารางอื่น ทำหลายอย่างได้พร้อมๆกัน
+    public async Task<ActionResult<product>> CreateProduct([FromForm] product product, IFormFile image)
     {
         // เพิ่มข้อมูลลงในตาราง Products
         _context.products.Add(product);
 
-        //ตรวจสอบว่ามีการอัพโหลดรูปภาพหรือไม่
-        if (image != null)
-        {
-            //กำหนดชื่อไฟล์รูปภาพ
+        // ตรวจสอบว่ามีการอัพโหลดไฟล์รูปภาพหรือไม่
+        if(image != null){
+            // กำหนดชื่อไฟล์รูปภาพใหม่
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
 
             // บันทึกไฟล์รูปภาพ
             string uploadFolder = Path.Combine(_env.ContentRootPath, "uploads");
 
-            // ตรวจสอบว่าโฟล์เดอร์นี้มีอยู่หรือยัง
+            // ตรวจสอบว่าโฟลเดอร์ uploads มีหรือไม่
             if (!Directory.Exists(uploadFolder))
             {
                 Directory.CreateDirectory(uploadFolder);
@@ -117,15 +116,10 @@ public class ProductController : ControllerBase
             {
                 await image.CopyToAsync(fileStream);
             }
-            // บันทึกชื่อไฟล์ลงฐานข้อมูล
+
+            // บันทึกชื่อไฟล์รูปภาพลงในฐานข้อมูล
             product.product_picture = fileName;
-
-
-
         }
-
-
-
 
         _context.SaveChanges();
 
